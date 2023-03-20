@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="current_time">Current time</string>
+    <string name="delete">Delete</string>
+    <string name="duplicate">Duplicate</string>
+</resources>
