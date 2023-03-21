@@ -13,9 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import ge.rogavactive.alarm.ui.alarmdetails.AlarmDetailsScreenComposable
 import ge.rogavactive.alarm.ui.alarmdetails.AlarmDetailsScreenInfo
 import ge.rogavactive.alarm.ui.alarmlist.AlarmScreenComposable
@@ -24,8 +26,10 @@ import ge.rogavactive.wakeme.R
 typealias NavComposableFun = @Composable (NavController) -> Unit
 
 sealed class TabsItem(@StringRes val title: Int, val route: String, val icon: ImageVector, val screen: NavComposableFun) {
-    object AlarmScreen : TabsItem(R.string.tab_alarm, "Alarm", Icons.Filled.Favorite , {
-        AlarmScreenComposable( onOpenDetailsClick = { it.navigate(AlarmDetailsScreenInfo.route) })
+    object AlarmScreen : TabsItem(R.string.tab_alarm, "Alarm", Icons.Filled.Favorite , { navController ->
+        AlarmScreenComposable( onOpenDetailsClick = { id ->
+            navController.navigate("${AlarmDetailsScreenInfo.route}/$id")
+        })
     })
     object ReminderScreen : TabsItem(R.string.tab_reminders,"Reminder",  Icons.Filled.AccountBox , { PlaceHolderText("ReminderScreen") })
     object AddButtonDialog : TabsItem(R.string.tab_button_add,"AddButton",  Icons.Filled.AddCircle, { PlaceHolderText("AddButtonDialog") })
@@ -44,7 +48,13 @@ fun WakeMeNavHost(
         composable(TabsItem.AddButtonDialog.route) { TabsItem.AddButtonDialog.screen(navController) }
         composable(TabsItem.CalendarScreen.route) { TabsItem.CalendarScreen.screen(navController) }
         composable(TabsItem.SettingsScreen.route) { TabsItem.SettingsScreen.screen(navController) }
-        composable(AlarmDetailsScreenInfo.route) { AlarmDetailsScreenComposable() }
+        composable(
+            route = "${AlarmDetailsScreenInfo.route}/{${AlarmDetailsScreenInfo.ARG_ID}}",
+            arguments = listOf(navArgument(AlarmDetailsScreenInfo.ARG_ID) {
+                type = NavType.IntType
+                defaultValue = -1
+            })
+        ) { entry ->  AlarmDetailsScreenComposable(id = entry.arguments?.getInt(AlarmDetailsScreenInfo.ARG_ID)) }
     }
 }
 

@@ -30,7 +30,7 @@ import ge.rogavactive.common.R
 @Composable
 fun AlarmListItem(
     data: AlarmListItemData,
-    onClick: () -> Unit,
+    onClick: (Int) -> Unit,
     onRemove: () -> Unit,
     onDuplicate: () -> Unit
 ) {
@@ -60,7 +60,7 @@ fun AlarmListItem(
                 }
             }
         ) {
-            Card(onClick = onClick) {
+            Card(onClick =  { onClick(data.id) }) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

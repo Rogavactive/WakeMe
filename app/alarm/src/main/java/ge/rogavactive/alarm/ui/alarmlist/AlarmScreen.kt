@@ -16,7 +16,7 @@ import ge.rogavactive.alarm.ui.alarmlist.AlarmListItem
 
 @Composable
 fun AlarmScreenComposable(
-    onOpenDetailsClick : () -> Unit,
+    onOpenDetailsClick : (Int) -> Unit,
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
     val alarms = viewModel.alarms.collectAsState()
