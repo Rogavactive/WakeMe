@@ -1,9 +1,4 @@
 <resources>
-    <string name="app_name">WakeMe</string>
-    <string name="tab_alarm">Alarm</string>
-    <string name="tab_reminders">Reminders</string>
-    <string name="tab_button_add">Add new</string>
-    <string name="tab_calendar">Calendar</string>
-    <string name="tab_settings">Settings</string>
+
 
 </resources>

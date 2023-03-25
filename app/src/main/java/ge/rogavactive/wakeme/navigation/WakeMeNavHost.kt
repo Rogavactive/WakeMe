@@ -1,5 +1,6 @@
 package ge.rogavactive.wakeme.navigation
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -7,10 +8,12 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -21,20 +24,20 @@ import androidx.navigation.navArgument
 import ge.rogavactive.alarm.ui.alarmdetails.AlarmDetailsScreenComposable
 import ge.rogavactive.alarm.ui.alarmdetails.AlarmDetailsScreenInfo
 import ge.rogavactive.alarm.ui.alarmlist.AlarmScreenComposable
-import ge.rogavactive.wakeme.R
+import ge.rogavactive.common.R
 
 typealias NavComposableFun = @Composable (NavController) -> Unit
 
-sealed class TabsItem(@StringRes val title: Int, val route: String, val icon: ImageVector, val screen: NavComposableFun) {
-    object AlarmScreen : TabsItem(R.string.tab_alarm, "Alarm", Icons.Filled.Favorite , { navController ->
+sealed class TabsItem(@StringRes val title: Int, val route: String, @DrawableRes val icon: Int, val screen: NavComposableFun) {
+    object AlarmScreen : TabsItem(R.string.tab_alarm, "Alarm", R.drawable.ic_alarm_clock , { navController ->
         AlarmScreenComposable( onOpenDetailsClick = { id ->
             navController.navigate("${AlarmDetailsScreenInfo.route}/$id")
         })
     })
-    object ReminderScreen : TabsItem(R.string.tab_reminders,"Reminder",  Icons.Filled.AccountBox , { PlaceHolderText("ReminderScreen") })
-    object AddButtonDialog : TabsItem(R.string.tab_button_add,"AddButton",  Icons.Filled.AddCircle, { PlaceHolderText("AddButtonDialog") })
-    object CalendarScreen : TabsItem(R.string.tab_calendar,"Calendar",  Icons.Filled.Call, { PlaceHolderText("CalendarScreen") })
-    object SettingsScreen : TabsItem(R.string.tab_settings,"Settings",  Icons.Filled.Settings, { PlaceHolderText("SettingsScreen") })
+    object ReminderScreen : TabsItem(R.string.tab_reminders,"Reminder",  R.drawable.ic_reminder_bell , { PlaceHolderText("ReminderScreen") })
+    object AddButtonDialog : TabsItem(R.string.tab_button_add,"AddButton",  R.drawable.ic_plus, { PlaceHolderText("AddButtonDialog") })
+    object CalendarScreen : TabsItem(R.string.tab_calendar,"Calendar",  R.drawable.ic_calendar, { PlaceHolderText("CalendarScreen") })
+    object SettingsScreen : TabsItem(R.string.tab_settings,"Settings",  R.drawable.ic_settings, { PlaceHolderText("SettingsScreen") })
 }
 
 @Composable

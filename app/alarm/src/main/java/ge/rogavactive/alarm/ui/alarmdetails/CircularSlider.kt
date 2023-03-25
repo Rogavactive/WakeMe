@@ -14,6 +14,8 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import kotlin.math.*
 
+// TODO: Rework logic so it contains only necessary info for me and nothing more.
+//  should not resemble old slider I borrowed logic from
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CircularSlider(
