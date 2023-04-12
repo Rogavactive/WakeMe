@@ -1,5 +1,6 @@
 package ge.rogavactive.common
 
+import java.time.LocalTime
 import java.util.*
 
 fun Calendar.getCurrentTimeOfDayFormatted() : String {
@@ -12,4 +13,8 @@ fun Calendar.getTimeAsAngle() : Float {
     val currentHour = get(Calendar.HOUR_OF_DAY)
     val currentMinute = get(Calendar.MINUTE)
     return ( 15f * currentHour ) + (0.25f * currentMinute)
+}
+
+fun LocalTime.getTimeAsFloat(): Float {
+    return (hour.toFloat() + (minute.toFloat() / 60f)) / 24f
 }
