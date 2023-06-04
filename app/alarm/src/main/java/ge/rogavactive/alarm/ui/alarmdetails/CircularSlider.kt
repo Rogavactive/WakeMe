@@ -16,8 +16,10 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ge.rogavactive.alarm.viewModel.AlarmViewModel
 import ge.rogavactive.common.DarkBlue
+import ge.rogavactive.common.DarkGray
 import ge.rogavactive.common.PrimarySunOrange
 import ge.rogavactive.common.getTimeAsFloat
 import kotlin.math.*
@@ -32,9 +34,8 @@ fun CircularSlider(
     stroke: Float = 20f,
     selectedStroke: Float = 40f,
     cap: StrokeCap = StrokeCap.Round,
-    touchStroke: Float = 50f,
-    thumbColor: Color = Color.Blue,
-    progressColor: Color = Color.Black,
+    touchStroke: Float = 100f,
+    thumbColor: Color = Color.Black,
     backgroundColor: Color = Color.LightGray,
     startAngle: Float = 0f,
     startSweepAngle: Float = 0f,
@@ -51,7 +52,11 @@ fun CircularSlider(
     var center by remember { mutableStateOf(Offset.Zero) }
     var appliedAngle by remember { mutableStateOf(0f) }
 
-    val sunriseSunsetData = viewModel.sunriseSunsetData.collectAsState()
+    LaunchedEffect(key1 = startSweepAngle) {
+        angle = (startAngle + startSweepAngle) % 360f
+    }
+
+    val sunriseSunsetData = viewModel.sunriseSunsetData.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = angle) {
         var a = angle
         if (a <= 0f) {
@@ -84,7 +89,7 @@ fun CircularSlider(
                     MotionEvent.ACTION_DOWN -> {
                         val d = distance(offset, center)
                         val a = angle(center, offset)
-                        if (d >= radius - touchStroke / 2f && d <= radius + touchStroke / 2f && a !in -120f..-60f) {
+                        if (d >= radius - touchStroke / 2f && d <= radius + touchStroke / 2f) {
                             down = true
                             angle = a
                         } else {

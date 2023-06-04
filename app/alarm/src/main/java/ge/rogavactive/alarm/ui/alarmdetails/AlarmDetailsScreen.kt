@@ -1,5 +1,6 @@
 package ge.rogavactive.alarm.ui.alarmdetails
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import ge.rogavactive.alarm.viewModel.AlarmViewModel
@@ -14,5 +15,7 @@ fun AlarmDetailsScreenComposable(
     id: Int? = -1,
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
-    AlarmClockComposable()
+    Column {
+        AlarmClockComposable()
+    }
 }

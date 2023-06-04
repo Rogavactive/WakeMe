@@ -5,28 +5,25 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import ge.rogavactive.common.R
-import ge.rogavactive.common.getCurrentTimeOfDayFormatted
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import ge.rogavactive.common.DarkBlue
+import ge.rogavactive.common.DarkGray
+import ge.rogavactive.common.LightGray
 import ge.rogavactive.common.getTimeAsAngle
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.abs
 
@@ -34,12 +31,15 @@ import kotlin.math.abs
 fun AlarmClockComposable() {
     val currentTime = Calendar.getInstance()
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f),
         contentAlignment = Alignment.Center
     ) {
         val currentTimeAngle = currentTime.getTimeAsAngle()
-        val sweepValue = remember { mutableStateOf(0f) }
+        val sweepValue = remember { mutableStateOf(0f.toLocalTime()) }
         val lastVibrationAngle = remember { mutableStateOf(-1f) }
+        val sweepAngle = remember { mutableStateOf(120f) }
 
         val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager: VibratorManager = LocalContext.current.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
@@ -52,24 +52,28 @@ fun AlarmClockComposable() {
         }
 
         CircularSlider(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(40.dp),
             startAngle = currentTimeAngle,
-            startSweepAngle = 120f
+            startSweepAngle = sweepAngle.value
         ) {
             if (abs(it - lastVibrationAngle.value) > FIVE_MIN_INTERVAL) {
                 if (lastVibrationAngle.value != -1f)
                     vibrator.vibrateOnce()
                 lastVibrationAngle.value = it
             }
-            sweepValue.value = it
+            val newVal = it.toLocalTime()
+            if (newVal.hour != sweepValue.value.hour || newVal.minute != sweepValue.value.minute)
+                sweepValue.value = newVal
         }
-        Column {
-            Text(text = stringResource(id = R.string.current_time))
-            // TODO change time to follow minutes
-            Text(text = currentTime.getCurrentTimeOfDayFormatted())
-            // 8 hours of sleep
-            // target time
-            Text(text = sweepValue.value.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")))
+        AlarmNumberClock(time = sweepValue.value) { hour, minute ->
+            if (hour != sweepValue.value.hour || minute != sweepValue.value.minute) {
+                var newSweepAngle = getTimeAsAngle(hour, minute) - currentTimeAngle
+                if (newSweepAngle < 0f) newSweepAngle += 360f
+                sweepAngle.value = newSweepAngle
+                Log.d("dimadima", "$hour:$minute")
+            }
         }
     }
 
@@ -90,8 +94,7 @@ fun Float.toLocalTime(): LocalTime {
     val totalSeconds = (this * 24 * 60 * 60).toInt()
     val hours = totalSeconds / (60 * 60)
     val minutes = (totalSeconds % (60 * 60)) / 60
-    val seconds = totalSeconds % 60
-    return LocalTime.of(hours, minutes, seconds)
+    return LocalTime.of(hours, minutes)
 }
 
 private const val FIVE_MIN_INTERVAL = 1f / (24f * (60f / 5f))
